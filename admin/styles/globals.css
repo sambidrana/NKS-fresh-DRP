@@ -8,7 +8,7 @@ input, textarea{
   @apply mb-2;
 }
 input:focus, textarea:focus{
-  @apply border-blue-800;
+  @apply border-blue-900;
 }
 h1{
   @apply text-blue-900 mb-4 text-xl
