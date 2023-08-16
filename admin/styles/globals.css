@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+img {
+  max-height: 100%
+}
 input, textarea{
   /* @apply to use tailwind else normal css */
   @apply border border-gray-900 rounded-md px-1 w-full; 
@@ -44,8 +47,10 @@ table.basic a{
 
 /* ProductForm upload */
 .btn-upload:hover {
-  @apply border bg-gray-500 text-white
+  @apply border bg-gray-500 text-white cursor-pointer
 }
+
+
 /* :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
