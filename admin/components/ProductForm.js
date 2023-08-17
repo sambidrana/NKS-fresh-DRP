@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Spinner from "./Spinner";
+import { ReactSortable } from "react-sortablejs";
 
 export default function ProductForm({
   _id,
@@ -13,8 +14,8 @@ export default function ProductForm({
   const [productName, setProductName] = useState(existingName || "");
   const [description, setDescription] = useState(existingDescription || "");
   const [price, setPrice] = useState(existingPrice || "");
-  const [images,setImages] = useState(existingImages || []);
-  const [isUploading, setIsUploading] = useState(false)
+  const [images, setImages] = useState(existingImages || []);
+  const [isUploading, setIsUploading] = useState(false);
   // const [goToProducts, setGoToProducts] = useState(false)
   const router = useRouter();
 
@@ -28,25 +29,29 @@ export default function ProductForm({
       //create
       await axios.post("/api/products", data);
     }
-    router.push("/products");// setGoToProducts(true)// if(goToProducts) { // }
+    router.push("/products"); // setGoToProducts(true)// if(goToProducts) { // }
   };
-  
-  const uploadImages = async function(e) {
+
+  const uploadImages = async function (e) {
     const files = e.target?.files;
-    if(files?.length > 0) {
-      setIsUploading(true)
+    if (files?.length > 0) {
+      setIsUploading(true);
       const data = new FormData();
-      for(const file of files) {
-        data.append('file', file)
+      for (const file of files) {
+        data.append("file", file);
       }
-      const response = await axios.post('/api/upload', data);
+      const response = await axios.post("/api/upload", data);
       // console.log(response.data)
-      setImages(oldImages => {
-        return [...oldImages, ...response.data.links]
+      setImages((oldImages) => {
+        return [...oldImages, ...response.data.links];
       });
-      setIsUploading(false)
+      setIsUploading(false);
     }
-  }
+  };
+
+  const updateImagesOrder = function (images) {
+    setImages(images);
+  };
 
   return (
     <form onSubmit={saveProduct}>
@@ -59,11 +64,14 @@ export default function ProductForm({
       />
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-1.5">
-        {!!images?.length && images.map((link, i) => (
-          <div key={i} className="h-24">
-            <img src={link} alt="" className="rounded-lg border"  />
-          </div>
-        ))}
+        <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap gap-1">
+          {!!images?.length &&
+            images.map((link, i) => (
+              <div key={i} className="h-24">
+                <img src={link} alt="" className="rounded-lg border" />
+              </div>
+            ))}
+        </ReactSortable>
         {isUploading && (
           <div className="h-24 flex items-center">
             <Spinner />

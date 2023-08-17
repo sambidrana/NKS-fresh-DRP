@@ -2,6 +2,7 @@ import Layout from "@/components/Layout";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Spinner from "@/components/Spinner";
 
 export default function DeleteProduct() {
   const [productInfo, setProductInfo] = useState(null);
@@ -33,10 +34,12 @@ export default function DeleteProduct() {
   };
   if (!productInfo) {
     return (
-      <Layout>
-        <h1>Loading...</h1>
-      </Layout>
-    );
+        <Layout>
+          <div className="flex justify-center items-center min-h-screen">
+            <Spinner />
+          </div>
+        </Layout>
+      );
   }
   if (isDeleted) {
     return (

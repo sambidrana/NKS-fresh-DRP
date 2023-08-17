@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import ProductForm from "@/components/ProductForm";
+import Spinner from "@/components/Spinner";
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -21,7 +22,9 @@ export default function EditProduct({}) {
   if (!productInfo) {
     return (
       <Layout>
-        <h1>Loading...</h1>
+        <div className="flex justify-center items-center min-h-screen">
+          <Spinner />
+        </div>
       </Layout>
     );
   }
