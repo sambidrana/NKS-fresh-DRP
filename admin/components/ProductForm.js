@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Spinner from "./Spinner";
 import { ReactSortable } from "react-sortablejs";
@@ -10,6 +10,7 @@ export default function ProductForm({
   description: existingDescription,
   price: existingPrice,
   images: existingImages,
+  category: assignedCategory
 }) {
   const [productName, setProductName] = useState(existingName || "");
   const [description, setDescription] = useState(existingDescription || "");
@@ -17,11 +18,19 @@ export default function ProductForm({
   const [images, setImages] = useState(existingImages || []);
   const [isUploading, setIsUploading] = useState(false);
   // const [goToProducts, setGoToProducts] = useState(false)
+  const [categories, setCategories] = useState([]);
+  const [category, setCategory] = useState(assignedCategory || "");
   const router = useRouter();
+
+  useEffect(() => {
+    axios.get("/api/categories").then((res) => {
+      setCategories(res.data);
+    });
+  }, []);
 
   const saveProduct = async function (e) {
     e.preventDefault();
-    const data = { productName, description, price, images };
+    const data = { productName, description, price, images, category };
     if (_id) {
       //edit/update
       await axios.put("/api/products", { ...data, _id });
@@ -62,9 +71,23 @@ export default function ProductForm({
         value={productName}
         onChange={(e) => setProductName(e.target.value)}
       />
+      <label>Category</label>
+      <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <option value="">Uncategorised</option>
+        {categories.length > 0 &&
+          categories.map((category) => (
+            <option value={category._id} key={category._id}>
+              {category.name}
+            </option>
+          ))}
+      </select>
       <label>Photos</label>
       <div className="mb-2 flex flex-wrap gap-1.5">
-        <ReactSortable list={images} setList={updateImagesOrder} className="flex flex-wrap gap-1">
+        <ReactSortable
+          list={images}
+          setList={updateImagesOrder}
+          className="flex flex-wrap gap-1"
+        >
           {!!images?.length &&
             images.map((link, i) => (
               <div key={i} className="h-24">
