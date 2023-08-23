@@ -1,9 +1,11 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Category } from "@/models/Category";
+import { authOptions, isAdminRequest } from "./auth/[...nextauth]";
 
 export default async function handlerCategories(req, res) {
   const method = req.method; // {method} = req
   await mongooseConnect();
+  await isAdminRequest(req,res)
   if (method === "GET") {
     const allCategories = await Category.find().populate("parent");
     res.json(allCategories);
@@ -12,7 +14,7 @@ export default async function handlerCategories(req, res) {
     const { name, parentCategory, properties } = req.body;
     const categoryDoc = await Category.create({
       name,
-      parent: parentCategory,
+      parent: parentCategory || undefined,
       properties,
     });
     res.json(categoryDoc);
@@ -25,7 +27,7 @@ export default async function handlerCategories(req, res) {
       { _id },
       {
         name,
-        parent: parentCategory,
+        parent: parentCategory || undefined,
         properties,
       }
     );

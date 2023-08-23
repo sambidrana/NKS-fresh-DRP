@@ -1,39 +1,62 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
+import { isAdminRequest } from "./auth/[...nextauth]";
 
 export default async function handlerNewProduct(req, res) {
-    const {method} = req;
-    await mongooseConnect();
-    
-    if (method === 'GET') {
-        if (req.query?.id) {
-            // console.log(res)
-            res.json(await Product.findOne({_id:req.query.id}));
-        } else {
-            res.json(await Product.find())
-        }
-    }
-    if (method === 'POST') {
-        const {productName, description, price, images, category} = req.body;
-        const productDoc = await Product.create({
-            productName, description, price, images, category
-        })
-        res.json(productDoc)
-    }
-    if (method === "PUT") {
-        const {productName, description, price, images, category, _id} = req.body;
-        // console.log({images})
-        await Product.updateOne({_id}, {productName, description, price, images, category })
-        res.json(true)
-    }
-    if (method === "DELETE") {
-        if (req.query?.id) {
-            await Product.deleteOne({_id:req.query?.id});
-            res.json(true);
-        }
-         
-    }
+  const { method } = req;
+  await mongooseConnect();
+  await isAdminRequest(req,res)
 
+  if (method === "GET") {
+    if (req.query?.id) {
+      // console.log(res)
+      res.json(await Product.findOne({ _id: req.query.id }));
+    } else {
+      res.json(await Product.find());
+    }
+  }
+  if (method === "POST") {
+    const {
+      productName,
+      description,
+      price,
+      images,
+      category,
+      properties,
+    } = req.body;
+    const productDoc = await Product.create({
+      productName,
+      description,
+      price,
+      images,
+      category,
+      properties,
+    });
+    res.json(productDoc);
+  }
+  if (method === "PUT") {
+    const {
+      productName,
+      description,
+      price,
+      images,
+      category,
+      properties,
+      _id,
+    } = req.body;
+    // console.log({images})
+    await Product.updateOne(
+      { _id },
+      { productName, description, price, images, category, properties }
+    );
+    res.json(true);
+  }
+  if (method === "DELETE") {
+    if (req.query?.id) {
+      await Product.deleteOne({ _id: req.query?.id });
+      res.json(true);
+    }
+  }
 }
 
 // In Next.js, the api folder within the pages directory is a special folder that allows you to create API routes without setting up an additional server or configuring routes as you would in traditional setups, like with Express.js. Each file inside the api folder corresponds to an API endpoint. These endpoints are essentially serverless functions that run on-demand.

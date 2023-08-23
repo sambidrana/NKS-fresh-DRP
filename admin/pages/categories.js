@@ -25,14 +25,15 @@ function Categories({ swal }) {
     e.preventDefault();
     const payload = {
       name,
+      parentCategory,
       properties: properties.map((p) => ({
         name: p.name,
         values: p.values.split(","),
       })),
     };
-    if (parentCategory) {
-      payload.parentCategory = parentCategory;
-    }
+    // if (parentCategory) { // TODO - Change it in the return statement so it works even when parentCat... is false
+    //   payload.parentCategory = parentCategory;
+    // }
     if (editedCategory) {
       payload._id = editedCategory._id;
       await axios.put("/api/categories", payload); //{...payload, _id:editedCategory._id}
@@ -42,6 +43,7 @@ function Categories({ swal }) {
     }
     setName("");
     setParentCategory("");
+    setProperties([])
     fetchCategories();
   };
 
@@ -49,8 +51,14 @@ function Categories({ swal }) {
     setEditedCategory(category);
     setName(category.name);
     setParentCategory(category.parent?._id);
+    setProperties(
+      category.properties.map(({name,values}) => ({
+      name,
+      values: values.join(',')
+    }))
+    )
   };
-
+  
   const deleteCategory = function (category) {
     swal
       .fire({
@@ -137,7 +145,7 @@ function Categories({ swal }) {
           <label className="block">Properties</label>
           <button
             type="button"
-            className="btn-default text-sm mb-1"
+            className="btn-default text-sm mb-3 btn-general"
             onClick={addProperty}
           >
             Add New Property
@@ -148,7 +156,6 @@ function Categories({ swal }) {
                 <input
                   type="text"
                   value={property.name}
-                  className="mb-0"
                   onChange={(e) =>
                     handlePropertyNameChange(i, property, e.target.value)
                   }
@@ -157,7 +164,6 @@ function Categories({ swal }) {
                 <input
                   type="text"
                   value={property.values}
-                  className="mb-0"
                   onChange={(e) =>
                     handlePropertyValuesChange(i, property, e.target.value)
                   }
@@ -165,7 +171,7 @@ function Categories({ swal }) {
                 ></input>
                 <button
                   type="button"
-                  className="btn-default"
+                  className="text-white text-sm bg-red-600 px-4 rounded-lg mb-3 mt-2 ml-2 btn-general"
                   onClick={() => removeProperty(i)}
                 >
                   Remove
@@ -177,17 +183,18 @@ function Categories({ swal }) {
           {editedCategory && (
             <button
               type="button"
-              className="btn-default"
+              className="btn-default btn-general"
               onClick={() => {
                 setEditedCategory(null);
                 setName("");
                 setParentCategory("");
+                setProperties([]);
               }}
             >
               Cancel
             </button>
           )}
-          <button type="submit" className="btn-primary py-1 ">
+          <button type="submit" className="btn-primary py-1 btn-general">
             Save
           </button>
         </div>
@@ -209,13 +216,13 @@ function Categories({ swal }) {
                   <td>{category?.parent?.name}</td>
                   <td>
                     <button
-                      className="btn-primary mr-1.5"
+                      className="btn-default mr-1.5 btn-general"
                       onClick={() => editCategory(category)}
                     >
                       Edit
                     </button>
                     <button
-                      className="btn-primary"
+                      className="bg-red-600 py-1 px-3 text-white rounded-md btn-general"
                       onClick={() => deleteCategory(category)}
                     >
                       Delete

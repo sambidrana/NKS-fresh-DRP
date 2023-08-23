@@ -13,10 +13,10 @@ export default function Products() {
   }, []);
   return (
     <Layout>
-      <Link href={"/products/new"} className="btn-primary">
+      <Link href={"/products/new"} className="btn-primary btn-general">
         Add New Product
       </Link>
-      <table className="basic mt-2">
+      <table className="basic mt-4">
         <thead>
           <tr>
             <td>Product Name</td>
@@ -28,7 +28,7 @@ export default function Products() {
             <tr key={product._id}>
               <td>{product.productName}</td>
               <td>
-                <Link href={`/products/edit/${product._id}`}>
+                <Link href={`/products/edit/${product._id}`} className="btn-general">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -45,7 +45,7 @@ export default function Products() {
                   </svg>
                   Edit
                 </Link>
-                <Link href={`/products/delete/${product._id}`}>
+                <Link href={`/products/delete/${product._id}`} className="btn-delete btn-general">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
