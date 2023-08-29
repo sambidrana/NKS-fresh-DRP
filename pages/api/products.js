@@ -2,17 +2,18 @@ import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Product";
 import { isAdminRequest } from "./auth/[...nextauth]";
 
+
 export default async function handlerNewProduct(req, res) {
   const { method } = req;
   await mongooseConnect();
-  await isAdminRequest(req,res)
+  // await isAdminRequest(req,res)
 
   if (method === "GET") {
     if (req.query?.id) {
       // console.log(res)
       res.json(await Product.findOne({ _id: req.query.id }));
     } else {
-      res.json(await Product.find());
+      res.json(await Product.find().sort({productName: 1}));
     }
   }
   if (method === "POST") {
