@@ -12,8 +12,10 @@ export default async function handlerNewProduct(req, res) {
     if (req.query?.id) {
       // console.log(res)
       res.json(await Product.findOne({ _id: req.query.id }));
+    } else if (req.query?.recent) {
+      res.json(await Product.find().sort({updatedAt: -1}).limit(10));
     } else {
-      res.json(await Product.find().sort({productName: 1}));
+      res.json(await Product.find().sort({productName: 1}))
     }
   }
   if (method === "POST") {
